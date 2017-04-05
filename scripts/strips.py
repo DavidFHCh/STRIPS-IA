@@ -162,6 +162,12 @@ class Problema:
         )
         """.format(**dic)
 
+    def _aplicable (self, accion):
+        """
+        Decide si una accion es aplicable en el estado actual.
+        :param accion: la accion que se quiere aplicar
+        """
+        
 
 if __name__ == '__main__':
     print("Crea aquí los objetos del problema y pide a la computadora que lo resuelva")
@@ -188,35 +194,76 @@ if __name__ == '__main__':
     p3 = Predicado('belong',[Variable('?k', 'crane'),Variable('?l', 'location')])
 
     p4 = Predicado('at',[Variable('?r', 'robot'),Variable('?l', 'location')])
-    np4 = Predicado('at',[Variable('?r', 'robot'),Variable('?l', 'location')], True)
     p5 = Predicado('occupied',[Variable('?l', 'location')])
-    np5 = Predicado('occupied',[Variable('?l', 'location')], True)
     p6 = Predicado('loaded',[Variable('?r', 'robot'),Variable('?c', 'container')])
-    np6 = Predicado('loaded',[Variable('?r', 'robot'),Variable('?c', 'container')], True)
     p7 = Predicado('unloaded',[Variable('?r', 'robot')])
-    np7 = Predicado('unloaded',[Variable('?r', 'robot')], True)
 
     p8 = Predicado('holding',[Variable('?k', 'crane'),Variable('?c', 'container')])
-    np8 = Predicado('holding',[Variable('?k', 'crane'),Variable('?c', 'container')], True)
     p9 = Predicado('empty',[Variable('?k', 'crane')])
-    np9 = Predicado('empty',[Variable('?k', 'crane')], True)
 
     p10 = Predicado('in',[Variable('?c', 'container'),Variable('?p', 'pile')])
-    np10 = Predicado('in',[Variable('?c', 'container'),Variable('?p', 'pile')], True)
     p11 = Predicado('top',[Variable('?c', 'container'),Variable('?p', 'pile')])
-    np11 = Predicado('top',[Variable('?c', 'container'),Variable('?p', 'pile')], True)
     p12 = Predicado('on',[Variable('?k1', 'container'),Variable('?k2', 'container')])
-    np12 = Predicado('on',[Variable('?k1', 'container'),Variable('?k2', 'container')], True)
 
-    move = Acción('move',[Variable('?r', 'robot'),Variable('?from', 'location'),Variable('?to', 'location')],[p1,p4,np5],[p4,np5,p5,np4])
-    load = Acción('load',[Variable('?k', 'crane'),Variable('?c', 'container'),Variable('?r', 'robot')],[p4,p3,p8,p7],[p6,np7,p9,np8])
-    unload = Acción('unload',[Variable('?k', 'crane'),Variable('?c', 'container'),Variable('?r', 'robot')],[p3,p4,p6,p9],[p7,p8,np6,np8])
-    take = Acción('take',[Variable('?k', 'crane'),Variable('?c', 'container'),Variable('?p', 'pile')],[p3,p2,p9,p10,p11,p12],[p8,p11,np10,np11,np12,np9])
-    put = Acción('put',[Variable('?k', 'crane'),Variable('?c', 'container'),Variable('?p', 'pile')],[p3,p2,p8,p11],[p10,p11,p12,np11,np8,p9])
+    r = Variable('?r', 'robot')
+    frm = Variable('?from', 'location')
+    to = Variable('?to', 'location')
+    k = Variable('?k', 'crane')
+    c = Variable('?c', 'container')
+    p = Variable('?p', 'pile')
+    l = Variable('?l','location')
+    els = Variable('?else', 'container')
+
+    ap1 = Predicado('adjacent', [frm,to])
+    ap2 = Predicado('at',[r,frm])
+    nap3 = Predicado('occupied',[to], True)
+    ap4 = Predicado('at',[r,to])
+    nap5 = Predicado('occupied',[frm], True)
+    ap6 = Predicado('occupied',[to])
+    nap7 = Predicado('at',[r,frm], True)
+
+    ap8 = Predicado('at',[r,l])
+    ap9 = Predicado('belong',[k,l])
+    ap10 = Predicado('holding',[k,c])
+    ap11 = Predicado('unloaded',[r])
+    ap12 = Predicado('loaded',[r])
+    nap13 = Predicado('loaded',[r],True)
+    ap14 = Predicado('empty',[k])
+    nap15 = Predicado('holding',[k,c],True)
+
+    ap16 = Predicado('belong',[k,l])
+    ap17 = Predicado('at',[r,l])
+    ap18 = Predicado('loaded',[r,c])
+    ap19 = Predicado('empty',[k])
+    ap20 = Predicado('unloaded',[r])
+    ap21 = Predicado('holding',[k,c])
+    nap22 = Predicado('loaded',[r,c],True)
+    nap23 = Predicado('empty',[k],True)
+
+    ap24 = Predicado('belong',[k,l])
+    ap25 = Predicado('attached',[p,l])
+    ap26 = Predicado('empty',[k])
+    ap27 = Predicado('in',[c,p])
+    ap28 = Predicado('top',[c,p])
+    ap29 = Predicado('on',[c,els])
+    ap30 = Predicado('holding',[k,c])
+    ap31 = Predicado('top',[els,p])
+    nap32 = Predicado('in',[c,p],True)
+    nap33 = Predicado('top',[c,p],True)
+    nap34 = Predicado('on',[c,els],True)
+    nap35 = Predicado('empty',[k],True)
+    nap36 = Predicado('top',[els,p],True)
+    nap37 = Predicado('holding',[k,c],True)
+
+    move = Acción('move',[r,frm,to],[ap1,ap2,nap3],[ap4,nap5,ap6,nap7])
+    load = Acción('load',[k,c,r],[ap8,ap9,ap10,ap11],[ap12,nap13,ap14,nap15],[l])
+    unload = Acción('unload',[k,c,r],[ap16,ap17,ap18,ap19],[ap20,ap21,nap22,nap23],[l])
+    take = Acción('take',[k,c,p],[ap24,ap25,ap26,ap27,ap28,ap29],[ap30,ap31,nap32,nap33,nap34,nap35],[l,els])
+    put = Acción('put',[k,c,p],[ap24,ap25,ap30,ap31],[ap27,ap28,ap29,nap36,nap37,ap14],[els,l])
 
     dominio = Dominio('dock-worker-robot',
                       ['location', 'pile', 'robot', 'crane','container'],
-                      [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, np4, np5, np6, np7, np8, np9,np10, np11, np12],
+                      [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12],
                       [move, load, unload, take, put])
     #Fin Dominio
 
