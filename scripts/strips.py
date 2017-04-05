@@ -169,6 +169,7 @@ class Problema:
         """
         
 
+
 if __name__ == '__main__':
     print("Crea aquí los objetos del problema y pide a la computadora que lo resuelva")
 
