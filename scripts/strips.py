@@ -2,6 +2,7 @@
 #Practica strips
 #Hernandez Chiapa David Felipe
 # ------ Dominio -----
+import itertools
 
 class Dominio:
     """ Clase para definir el dominio, o espacio de estados en el cual se plantearán problemas de planeación. """
@@ -162,13 +163,73 @@ class Problema:
         )
         """.format(**dic)
 
-    def _aplicable (self, accion):
+    def aplicable_ (self, accion):
         """
         Decide si una accion es aplicable en el estado actual.
         :param accion: la accion que se quiere aplicar
         """
-        
+        lvars1 = accion.parámetros
+        if accion.vars =! None
+            lvars1 += accion.vars
+        asigs = asignar_valor (lvars1)
+        if asigs == []:
+            return (False, [])
+        for susts in asigs
+            for sust in susts
+                sust[0].valor = sust[1]
+            if self.satis_est(accion.precondiciones):
+                return (True,susts)
+        return (False,[])
 
+
+    def asignar_valor (self,vars):
+        """
+        Regresa todas la posibles combinaciones de valores
+        asignados posibles
+        :param vars : la lista de variables
+        """
+        asigs = []
+        for var in vars:
+            asigs_var = []
+            for o in self.objetos:
+                if var.tipo == o.tipos:
+                    asigs_var += [(var,o)]
+            if asigs_var == []:
+                return []
+            asigs += [asigs_var]
+        final = []
+        for asig in product(*asigs):
+            final += list(asig)
+        return final
+
+    def satis_est (self,preconds):
+        """
+        Decide si un estado es satisfacible o no.
+        """
+        for precond in preconds:
+            contenido = False
+            for cond in self.estado:
+                if (precond.nombre == cond.nombre and
+                    precond.negativo == cond.negativo and
+                    vars_eq (precond.variables,cond.variables)):
+                    contenido = True
+                    break
+            if not contenido:
+                return False
+        return True
+
+    def vars_eq (self, vars1, vars2):
+        """
+        Checa que dos listas de variables sean iguales.
+        Los nombres de las variables son ignorados.
+        """
+        if len (vars1) != len (vars2)
+            return False
+        for condi in range(0,len (vars1)):
+            if (vars1[condi].tipo != vars2[condi].tipo or
+                vars1[condi].valor != vars2[condi].valor):
+                return False
+        return True
 
 if __name__ == '__main__':
     print("Crea aquí los objetos del problema y pide a la computadora que lo resuelva")
