@@ -169,13 +169,13 @@ class Problema:
         :param accion: la accion que se quiere aplicar
         """
         lvars1 = accion.parámetros
-        if accion.vars =! None
+        if accion.vars != None:
             lvars1 += accion.vars
-        asigs = asignar_valor (lvars1)
+        asigs = self.asignar_valor (lvars1)
         if asigs == []:
             return (False, [])
-        for susts in asigs
-            for sust in susts
+        for susts in asigs:
+            for sust in susts:
                 sust[0].valor = sust[1]
             if self.satis_est(accion.precondiciones):
                 return (True,susts)
@@ -192,14 +192,14 @@ class Problema:
         for var in vars:
             asigs_var = []
             for o in self.objetos:
-                if var.tipo == o.tipos:
+                if var.tipo == o.tipo:
                     asigs_var += [(var,o)]
             if asigs_var == []:
                 return []
             asigs += [asigs_var]
         final = []
-        for asig in product(*asigs):
-            final += list(asig)
+        for asig in itertools.product(*asigs):
+            final += [list(asig)]
         return final
 
     def satis_est (self,preconds):
@@ -209,10 +209,10 @@ class Problema:
         for precond in preconds:
             contenido = False
             for cond in self.estado:
-                if (precond.nombre == cond.nombre and
-                    precond.negativo == cond.negativo and
-                    vars_eq (precond.variables,cond.variables)):
-                    contenido = True
+                contenido = (precond.nombre == cond.nombre and
+                        precond.negativo == cond.negativo and
+                        self.vars_eq (precond.variables,cond.variables))
+                if contenido:
                     break
             if not contenido:
                 return False
@@ -223,7 +223,7 @@ class Problema:
         Checa que dos listas de variables sean iguales.
         Los nombres de las variables son ignorados.
         """
-        if len (vars1) != len (vars2)
+        if len (vars1) != len (vars2):
             return False
         for condi in range(0,len (vars1)):
             if (vars1[condi].tipo != vars2[condi].tipo or
@@ -403,3 +403,4 @@ if __name__ == '__main__':
     print(dominio)
     print(problema)
     #Fin Primer ejercicio.
+    print(problema.aplicable_(take))
