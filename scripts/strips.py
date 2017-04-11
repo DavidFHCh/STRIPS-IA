@@ -3,6 +3,7 @@
 #Hernandez Chiapa David Felipe
 # ------ Dominio -----
 import itertools
+from collections import deque
 
 class Dominio:
     """ Clase para definir el dominio, o espacio de estados en el cual se plantearán problemas de planeación. """
@@ -231,6 +232,106 @@ class Problema:
                 return False
         return True
 
+    def es_meta (self):
+        """
+        Checa si el estado actual satisface el campo meta.
+        """
+        for goal in self.meta:
+            sat = False
+            for estado in self.estado
+                if( goal.nombre == estado.nombre and
+                    self.vars_eq(goal.variables,estado.variables) and
+                    goal.negativo == estado.negativo);
+                    sat = True
+                    break
+            if not sat:
+                return False
+        return True
+
+class Estado_Nodo:
+    def __init__(self,actual,padre,accion):
+        self.actual = actual
+        self.padre = padre
+        self.accion = accion
+
+class Recorrido:
+
+    def __init__(self,cola,incial,problema):
+        raiz = Estado_Nodo(incial.estado,None,None)
+        self.cola = [raiz]
+        self.problema = problema
+
+    def aplicables (self,problema):
+        aplic = []
+        for a in problema.dominio.acciones:
+            foo = problema.aplicable_(a)
+            if foo[0] == False:
+                continue
+            aplic += [(a,foo)]
+        return aplic
+
+    def copiar_lista (self,l):
+        fin = []
+        for x in l:
+            fin += [x]
+        return fin
+
+    def novo_problema (self,estado):
+        return Problema (self.problema.nombre,
+                        self.problema.dominio,
+                        self.problema.objetos,
+                        estado,
+                        self.problema.meta)
+
+    def sec_acciones (self,nestado,acciones):
+        if nestado.padre == None:
+            return acciones
+        acciones += [nestado.acciones]
+        return self.sec_acciones (nestado.padre,acciones)
+
+    def sustituir (self,post,asignaciones):
+        #magia
+        return post
+
+    def vars_eq1 (self, vars1, vars2):
+        """
+        Checa que dos listas de variables sean iguales.
+        Los nombres de las variables son ignorados.
+        """
+        if len (vars1) != len (vars2):
+            return False
+        for condi in range(0,len (vars1)):
+            if (vars1[condi].tipo != vars2[condi].tipo or
+                vars1[condi].valor != vars2[condi].valor):
+                return False
+        return True
+
+    def recorrer (self):
+        while (len (self.cola) != 0):
+            nestado = self.cola[0]
+            self.cola.pop(0)
+            problema = self.novo_problema (nestado.actual)
+            if problema.es_meta():
+                return self.sec_acciones (nestado,[])
+            laccion_aplic = self.aplicables (problema)
+            for aplic in laccion_aplic:
+                estado = []
+                post = copiar_lista(aplic[0].efectos)
+                postcond = self.sustituir (post,aplic[1])
+                estado += postcond
+                for pred in nestado.actual:
+                    entra = True
+                    for pred1 in postcond:
+                        if (pred.nombre == pred1.nombre and
+                            self.vars_eq1 (pred.variables,pred1.variables)):
+                            #esto cubre todos los casos en que las postcondiciones entren al siguiente estado
+                            entra = False
+                            break
+                    if entra:
+                        estado += [pred]
+                novo_nestado = Estado_Nodo (estado,nestado,aplic[0])
+                self.cola.append(novo_estado)
+
 if __name__ == '__main__':
     print("Crea aquí los objetos del problema y pide a la computadora que lo resuelva")
 
@@ -403,4 +504,3 @@ if __name__ == '__main__':
     print(dominio)
     print(problema)
     #Fin Primer ejercicio.
-    print(problema.aplicable_(take))
